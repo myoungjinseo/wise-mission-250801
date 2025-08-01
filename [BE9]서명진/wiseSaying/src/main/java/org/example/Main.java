@@ -120,6 +120,8 @@ public class Main {
         return -1;
     }
 
+    // 파일을 쓰는 메소드
+    // 라이브러리 사용 안하고 직접 json 작성
     public static void saveJson() {
         System.out.println("프로그램 다시 시작...\n");
         System.out.println("== 명언 앱 ==");
@@ -134,6 +136,7 @@ public class Main {
             sb.append("  \"content\": \"").append(ws.getContent()).append("\",\n");
             sb.append("  \"author\": \"").append(ws.getAuthor()).append("\"\n");
             sb.append("}");
+
             try (FileWriter fw = new FileWriter(file)){
                 fw.write(sb.toString());
             } catch (IOException e) {
