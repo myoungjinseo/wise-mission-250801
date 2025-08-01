@@ -1,5 +1,7 @@
 package org.example;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.regex.Pattern;
 public class Main {
     private static List<WiseSaying> dummyData = new ArrayList<>();
     private static Scanner sc = new Scanner(System.in);
+    private final static String PATH = "src/main/java/org/example/db/wiseSaying/";
     public static void main(String[] args) {
         System.out.println("==명령 앱==");
         String s = "";
@@ -21,7 +24,7 @@ public class Main {
                 createWiseSaying(++i);
             }
             if(s.equals("목록")){
-                System.out.println(getWiseSaying(i));
+                System.out.println(getWiseSaying());
             }
             if(s.contains("삭제?id=")){
                 Pattern pattern = Pattern.compile("\\d+");      // 패턴으로 id 값을 가져온다.
@@ -40,11 +43,7 @@ public class Main {
                 }
             }
         }
-
-        while(true){
-            System.out.println("프로그램 다시 시작 ...\n");
-
-        }
+        saveJson();
     }
 
     // 명언을 등록하는 메소드
@@ -71,7 +70,7 @@ public class Main {
     // 명언 목록 메소드
     // 리스트 문을 복사하여 리버스 시킴 -> 직접 참고하고 싶지 않아서
     // trim을 이용하여 마지막 줄바꿈을 없앤다.
-    public static String getWiseSaying(int id){
+    public static String getWiseSaying(){
         StringBuilder sb = new StringBuilder();
         sb.append("번호 / 작가 / 명언").append("\n");
         sb.append("----------------------").append("\n");
@@ -121,7 +120,31 @@ public class Main {
         return -1;
     }
 
-    public static void saveJson(){
+    public static void saveJson() {
+        System.out.println("프로그램 다시 시작...\n");
+        System.out.println("== 명언 앱 ==");
+        System.out.println("명령) 목록");
+        System.out.println(getWiseSaying());
 
+        for(WiseSaying ws : dummyData){
+            StringBuilder sb = new StringBuilder();
+            String file = String.format(PATH + "%d.json",ws.getId());
+            sb.append("{\n");
+            sb.append("  \"id\": ").append(ws.getId()).append(",\n");
+            sb.append("  \"content\": \"").append(ws.getContent()).append("\",\n");
+            sb.append("  \"author\": \"").append(ws.getAuthor()).append("\"\n");
+            sb.append("}");
+            try (FileWriter fw = new FileWriter(file)){
+                fw.write(sb.toString());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        try (FileWriter fw = new FileWriter(PATH + "lastId.txt")){
+            fw.write(String.valueOf(dummyData.getLast().getId()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
