@@ -1,7 +1,6 @@
 package org.example;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +40,9 @@ public class Main {
                     int id = Integer.parseInt(matcher.group());
                     updateWiseSaying(id);
                 }
+            }
+            if(s.equals("빌드")){
+                saveAllJson();
             }
         }
         saveJson();
@@ -149,5 +151,32 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // 명언의 전체 값을 json 파일로 추출
+    public static void saveAllJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[\n");
+        for(WiseSaying ws : dummyData){
+            sb.append("  {\n");
+            sb.append("    \"id\": ").append(ws.getId()).append(",\n");
+            sb.append("    \"content\": \"").append(ws.getContent()).append("\",\n");
+            sb.append("    \"author\": \"").append(ws.getAuthor()).append("\"\n");
+            sb.append("  }");
+            if(dummyData.getLast().getId() != ws.getId()){
+                sb.append(",");
+            }
+        }
+        sb.append("\n]");
+
+        String file = String.format(PATH + "data.json");
+        try (FileWriter fw = new FileWriter(file)){
+            fw.write(sb.toString());
+            fw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("data.json 파일의 내용이 갱신되었습니다.");
     }
 }
